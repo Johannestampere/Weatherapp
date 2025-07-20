@@ -3,6 +3,7 @@ import { GoogleLogin } from "@react-oauth/google";
 
 export default function GoogleLoginButton() {
     const handleLoginSuccess = async (credentialResponse: any) => {
+        // JWT given by google
         const idToken = credentialResponse.credential;
 
         if (!idToken) return;
