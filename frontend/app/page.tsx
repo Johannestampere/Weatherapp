@@ -1,7 +1,8 @@
 "use client"
+
 import GoogleLoginButton from "@/components/GoogleLoginButton";
 import useUser from "@/lib/useUser";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export default function LandingPage() {
@@ -10,7 +11,7 @@ export default function LandingPage() {
 
   useEffect(() => {
     if (user) {
-      router.push("/chat")
+      router.push("/chat");
     }
   }, [user])
 

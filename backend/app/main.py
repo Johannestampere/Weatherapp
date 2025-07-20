@@ -13,7 +13,7 @@ load_dotenv()
 
 # create the flask app, allow CORS
 app = Flask(__name__)
-CORS(app)
+CORS(app, supports_credentials=True, origins=["http://localhost:3000"])
 
 # session handling config
 app.config["SESSION_TYPE"] = "filesystem"
@@ -98,4 +98,4 @@ Be friendly and warm.
 
 # to run locally
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    app.run(debug=True, host="localhost", port=5000)
