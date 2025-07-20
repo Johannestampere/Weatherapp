@@ -3,9 +3,10 @@ import { useRouter } from "next/navigation"
 
 export default function LogoutButton() {
     const router = useRouter();
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
     const handleLogout = async () => {
-        await fetch("https:lexidenassignment-production.up.railway.app/auth/logout", {
+        await fetch(`${backendUrl}/auth/logout`, {
             method: "POST",
             credentials: "include"
         })
