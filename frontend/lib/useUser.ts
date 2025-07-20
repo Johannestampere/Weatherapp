@@ -7,13 +7,14 @@ export type User = {
 
 // hook to store user state when logged in
 export default function useUser() {
-    const [user, setUser] = useState<User | null>(null)
+    const [user, setUser] = useState<User | null | undefined>(undefined)
+    const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() => {
         const fetchUser = async () => {
             try {
                 // get user data
-                const res = await fetch("http://localhost:5000/auth/me", {
+                const res = await fetch("http://localhost:5001/auth/me", {
                     credentials: "include"
                 });
 
@@ -26,12 +27,13 @@ export default function useUser() {
                 }
             } catch (err) {
                 setUser(null);
+            } finally {
+                setIsLoading(false);
             }
-
         }
 
         fetchUser();
     }, [])
     
-    return { user };
+    return { user, isLoading };
 }

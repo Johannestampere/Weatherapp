@@ -6,14 +6,18 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export default function LandingPage() {
-  const { user } = useUser();
+  const { user, isLoading } = useUser();
   const router = useRouter();
 
   useEffect(() => {
-    if (user) {
+    if (user && !isLoading) {
       router.push("/chat");
     }
-  }, [user])
+  }, [user, isLoading, router])
+
+  if (isLoading) {
+    return <div>loading...</div>;
+  }
 
   return (
     <div className="flex flex-col justify-center items-center gap-10">

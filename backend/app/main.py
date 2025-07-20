@@ -1,19 +1,19 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import openai
 import requests
 import os
 from dotenv import load_dotenv
 from flask import session
 from flask_session import Session
 from auth import auth_blueprint
+from openai import OpenAI
 
 # load env variables from .env
 load_dotenv()
 
 # create the flask app, allow CORS
 app = Flask(__name__)
-CORS(app, supports_credentials=True, origins=["http://localhost:3000"])
+CORS(app, supports_credentials=True, origins=["http://localhost:3000"], methods=["GET", "POST", "OPTIONS"], allow_headers=["Content-Type", "Authorization"])
 
 # session handling config
 app.config["SESSION_TYPE"] = "filesystem"
@@ -23,13 +23,17 @@ app.secret_key = os.getenv("FLASK_SECRET_KEY")
 
 Session(app)
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
 weather_api_key = os.getenv("WEATHER_API_KEY")
 
 app.register_blueprint(auth_blueprint, url_prefix="/auth")
 
 @app.route("/chat", methods=["POST"])
 def chat():
+    # check if user is authenticated
+    user = session.get("user")
+    if not user:
+        return jsonify({"error": "not authenticated"}), 401
+    
     try:
         # extract data from message sent from the frontend
         data = request.get_json()
@@ -48,7 +52,7 @@ def chat():
         city = ipapi_data.get("city")
 
         if not city:
-            return jsonify({"error": "could not get user's city"}), 400
+            city = "Waterloo"  # only for dev
 
         # use WeatherAPI to get current weather in that city
         weather_response = requests.get(f"http://api.weatherapi.com/v1/current.json?key={weather_api_key}&q={city}").json()
@@ -67,30 +71,33 @@ def chat():
         uv = weather_response["current"]["uv"]
 
         # summary that goes to openAI
-        weather_summary = f"{condition}, {temperature}°C in {city}, {region}, {country}"
+        weather_summary = f"{condition}, {temperature}°C in {city}, {region}, {country}. Other factors: feels like {feelslike}, wind speed: {wind_speed}, uv: {uv}"
 
         # make the perfect prompt
         prompt = f"""
 You are a friendly weather assistant.
 The current weather is {weather_summary}.
 The user asked: "{message}".
-Respond in a very natural tone.
-Your reply should be formatted in **Markdown**. 
+Respond in a very natural, conversational tone.
+You may use simple markdown for emphasis (like *italics* or **bold**), but avoid using headings or excessive formatting.
 Be friendly and warm.
+
+Example response:
+It's currently **overcast** and *21.1°C* in Waterloo. A bit cloudy, but still comfortable! The wind is gentle at 5 km/h, and the UV index is low. Enjoy your day!
 """
 
         # call openAI
-
-        chat_response = openai.ChatCompletion.create(
+        client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+        chat_response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
                 {"role": "user", "content": prompt}
             ],
-            max_tokens=150
+            max_tokens=300
         )
 
-        reply = chat_response.choices[0].message["content"]
+        reply = chat_response.choices[0].message.content
         return jsonify({"reply": reply})
 
     except Exception as e:
@@ -98,4 +105,4 @@ Be friendly and warm.
 
 # to run locally
 if __name__ == "__main__":
-    app.run(debug=True, host="localhost", port=5000)
+    app.run(debug=True, host="localhost", port=5001)

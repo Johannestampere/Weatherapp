@@ -17,7 +17,11 @@ def google_auth():
             return jsonify({"error": "missing google id token"}), 400
         
         # verify the google id token via google
-        id_info = google_id_token.verify_oauth2_token(google_id_token, google_requests.Request(), os.getenv("GOOGLE_CLIENT_ID"))
+        id_info = id_token.verify_oauth2_token(
+            google_id_token, 
+            google_requests.Request(), 
+            os.getenv("GOOGLE_CLIENT_ID")
+        )
 
         user_email = id_info.get("email")
         user_name = id_info.get("name")
@@ -33,6 +37,8 @@ def google_auth():
             "name": user_name
         })
     
+    except ValueError as e:
+        return jsonify({"error": "invalid token"}), 401
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 

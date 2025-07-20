@@ -1,7 +1,8 @@
 flask
 flask-cors
+flask-session
+python-dotenv
 openai
 requests
-python-dotenv
-flask-session
 google-auth
+google-auth-oauthlib

@@ -8,18 +8,25 @@ var { k: __turbopack_refresh__, m: module } = __turbopack_context__;
 __turbopack_context__.s({
     "default": ()=>GoogleLoginButton
 });
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$polyfills$2f$process$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = /*#__PURE__*/ __turbopack_context__.i("[project]/node_modules/next/dist/build/polyfills/process.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/jsx-dev-runtime.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$react$2d$oauth$2f$google$2f$dist$2f$index$2e$esm$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/@react-oauth/google/dist/index.esm.js [app-client] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/navigation.js [app-client] (ecmascript)");
+;
+var _s = __turbopack_context__.k.signature();
 "use client";
 ;
 ;
 function GoogleLoginButton() {
+    _s();
+    const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"])();
+    console.log("Google Client ID:", ("TURBOPACK compile-time value", "913384226017-ukauq8ee7vmng53nle1gvm0irea2akqv.apps.googleusercontent.com"));
     const handleLoginSuccess = async (credentialResponse)=>{
         // JWT given by google
         const idToken = credentialResponse.credential;
         if (!idToken) return;
         // send google id token to backend
-        const res = await fetch("http://localhost:5000/auth/login", {
+        const res = await fetch("http://localhost:5001/auth/login", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -31,9 +38,10 @@ function GoogleLoginButton() {
         });
         // get response data from backend
         const data = await res.json();
-        // save the JWT returned by the backend
-        if (data.token) {
-            localStorage.setItem("token", data.token);
+        // check whether login was successful
+        if (res.ok && data.message === "JWT valid, login valid") {
+            console.log("Login successful:", data);
+            router.push("/chat");
         } else {
             console.error("login failed: ", data);
         }
@@ -43,10 +51,15 @@ function GoogleLoginButton() {
         onError: ()=>console.error("login error")
     }, void 0, false, {
         fileName: "[project]/components/GoogleLoginButton.tsx",
-        lineNumber: 33,
+        lineNumber: 37,
         columnNumber: 9
     }, this);
 }
+_s(GoogleLoginButton, "fN7XvhJ+p5oE6+Xlo0NJmXpxjC8=", false, function() {
+    return [
+        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"]
+    ];
+});
 _c = GoogleLoginButton;
 var _c;
 __turbopack_context__.k.register(_c, "GoogleLoginButton");
@@ -67,14 +80,15 @@ var _s = __turbopack_context__.k.signature();
 ;
 function useUser() {
     _s();
-    const [user, setUser] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
+    const [user, setUser] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(undefined);
+    const [isLoading, setIsLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(true);
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "useUser.useEffect": ()=>{
             const fetchUser = {
                 "useUser.useEffect.fetchUser": async ()=>{
                     try {
                         // get user data
-                        const res = await fetch("http://localhost:5000/auth/me", {
+                        const res = await fetch("http://localhost:5001/auth/me", {
                             credentials: "include"
                         });
                         const data = await res.json();
@@ -85,6 +99,8 @@ function useUser() {
                         }
                     } catch (err) {
                         setUser(null);
+                    } finally{
+                        setIsLoading(false);
                     }
                 }
             }["useUser.useEffect.fetchUser"];
@@ -92,10 +108,11 @@ function useUser() {
         }
     }["useUser.useEffect"], []);
     return {
-        user
+        user,
+        isLoading
     };
 }
-_s(useUser, "5s2qRsV95gTJBmaaTh11GoxYeGE=");
+_s(useUser, "ebEh1CFQyHxwrXpausOdQh1rEWk=");
 if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelpers !== null) {
     __turbopack_context__.k.registerExports(module, globalThis.$RefreshHelpers$);
 }
@@ -122,17 +139,28 @@ var _s = __turbopack_context__.k.signature();
 ;
 function LandingPage() {
     _s();
-    const { user } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$useUser$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"])();
+    const { user, isLoading } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$useUser$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"])();
     const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"])();
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "LandingPage.useEffect": ()=>{
-            if (user) {
+            if (user && !isLoading) {
                 router.push("/chat");
             }
         }
     }["LandingPage.useEffect"], [
-        user
+        user,
+        isLoading,
+        router
     ]);
+    if (isLoading) {
+        return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+            children: "loading..."
+        }, void 0, false, {
+            fileName: "[project]/app/page.tsx",
+            lineNumber: 19,
+            columnNumber: 12
+        }, this);
+    }
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: "flex flex-col justify-center items-center gap-10",
         children: [
@@ -141,28 +169,28 @@ function LandingPage() {
                 children: "Welcome to WeatherGPT, sign in to get started"
             }, void 0, false, {
                 fileName: "[project]/app/page.tsx",
-                lineNumber: 20,
+                lineNumber: 24,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$GoogleLoginButton$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                     fileName: "[project]/app/page.tsx",
-                    lineNumber: 22,
+                    lineNumber: 26,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/page.tsx",
-                lineNumber: 21,
+                lineNumber: 25,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/app/page.tsx",
-        lineNumber: 19,
+        lineNumber: 23,
         columnNumber: 5
     }, this);
 }
-_s(LandingPage, "nfa3wheCqA+B86qn1Y5uRDqrUWI=", false, function() {
+_s(LandingPage, "4laJwu7QNysci6a7a6riItroVlg=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$useUser$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"],
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"]

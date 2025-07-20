@@ -1,7 +1,10 @@
 "use client"
 import { GoogleLogin } from "@react-oauth/google";
+import { useRouter } from "next/navigation";
 
 export default function GoogleLoginButton() {
+    const router = useRouter();
+    console.log("Google Client ID:", process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID);
     const handleLoginSuccess = async (credentialResponse: any) => {
         // JWT given by google
         const idToken = credentialResponse.credential;
@@ -9,7 +12,7 @@ export default function GoogleLoginButton() {
         if (!idToken) return;
 
         // send google id token to backend
-        const res = await fetch("http://localhost:5000/auth/login", {
+        const res = await fetch("http://localhost:5001/auth/login", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -21,9 +24,10 @@ export default function GoogleLoginButton() {
         // get response data from backend
         const data = await res.json();
 
-        // save the JWT returned by the backend
-        if (data.token) {
-            localStorage.setItem("token", data.token);
+        // check whether login was successful
+        if (res.ok && data.message === "JWT valid, login valid") {
+            console.log("Login successful:", data);
+            router.push("/chat");
         } else {
             console.error("login failed: ", data);
         }

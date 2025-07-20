@@ -1,31 +1,36 @@
+"use client"
+
 import LogoutButton from "@/components/LogOutButton";
 import { useState, useEffect } from "react";
 import useUser from "@/lib/useUser";
 import { useRouter } from "next/navigation";
-
+import ReactMarkdown from "react-markdown";
 
 export default function MainPage() {
     // use custom hook to get user data
-    const { user } = useUser();
+    const { user, isLoading } = useUser();
     const router = useRouter();
 
     const [message, setMessage] = useState("");
     const [reply, setReply] = useState<string | null>(null)
     const [sending, setSending] = useState(false);
 
-    // if user isn't logged in, take back to / route
-    if (!user) {
-        router.push("/");
-        return null;
+    useEffect(() => {
+        if (!isLoading && user === null) {
+            router.push("/");
+        }
+    }, [user, router, isLoading]);
+
+    if (isLoading || !user) {
+        return <div>loading...</div>;
     }
 
     const sendMessage = async () => {
         if (!message.trim()) return;
 
         setSending(true);
-        
-        try{
-            const res = await fetch("http://localhost:5000/chat", {
+        try {
+            const res = await fetch("http://localhost:5001/chat", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -38,6 +43,7 @@ export default function MainPage() {
 
             // get openAI's answer in json format
             const data = await res.json();
+            console.log("DEBUGGGG OpenAI response:", data.reply);
             setReply(data.reply);
         } catch (err) {
             setReply("something went wrong");
@@ -48,6 +54,7 @@ export default function MainPage() {
 
     return (
         <div>
+            <LogoutButton />
             <h1>Hey, {user.name}</h1>
             <h2>What do you want to know about today's weather?</h2>
 
@@ -62,13 +69,13 @@ export default function MainPage() {
             <button
             onClick={sendMessage}
             disabled={sending}
-            className="px-6 py-2 bg-grey-200 text-white rounded-lg hover:bg-blue-400 transition">
+            className="px-6 py-2 bg-gray-200 text-black rounded-lg hover:bg-gray-300 transition">
                 {sending ? "Thinking" : "Send"}
             </button>
 
             {reply && (
-                <div>
-                    <p>{reply}</p>
+                <div className="mt-4 p-4 bg-gray-50 rounded-lg markdown-content">
+                    <ReactMarkdown>{reply}</ReactMarkdown>
                 </div>
             )}
         </div>
