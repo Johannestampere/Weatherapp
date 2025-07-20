@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 
 export default function GoogleLoginButton() {
     const router = useRouter();
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
     const handleLoginSuccess = async (credentialResponse: any) => {
         // JWT given by google
         const idToken = credentialResponse.credential;
@@ -11,7 +12,7 @@ export default function GoogleLoginButton() {
         if (!idToken) return;
 
         // send google id token to backend
-        const res = await fetch("https:lexidenassignment-production.up.railway.app/auth/login", {
+        const res = await fetch(`${backendUrl}/auth/login`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

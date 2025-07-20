@@ -30,7 +30,8 @@ export default function MainPage() {
 
         setSending(true);
         try {
-            const res = await fetch("https:lexidenassignment-production.up.railway.app/chat", {
+            const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+            const res = await fetch(`${backendUrl}/chat`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

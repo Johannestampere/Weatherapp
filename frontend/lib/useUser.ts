@@ -14,7 +14,8 @@ export default function useUser() {
         const fetchUser = async () => {
             try {
                 // get user data
-                const res = await fetch("http://localhost:5001/auth/me", {
+                const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+                const res = await fetch(`${backendUrl}/auth/me`, {
                     credentials: "include"
                 });
 
