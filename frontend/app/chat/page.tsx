@@ -14,6 +14,18 @@ export default function MainPage() {
     const [message, setMessage] = useState("");
     const [reply, setReply] = useState<string | null>(null)
     const [sending, setSending] = useState(false);
+    const [coords, setCoords] = useState<{lat: number, lon: number} | null>(null);
+
+    useEffect(() => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                    setCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude });
+                },
+                () => {}
+            );
+        }
+    }, []);
 
     useEffect(() => {
         if (!isLoading && user === null) {
@@ -22,7 +34,7 @@ export default function MainPage() {
     }, [user, router, isLoading]);
 
     if (isLoading || !user) {
-        return <div className="text-2xl font-bold text-green-900">loading...</div>;
+        return <div className="text-2xl font-bold text-green-900">Loading...</div>;
     }
 
     const sendMessage = async () => {
@@ -38,7 +50,8 @@ export default function MainPage() {
                 },
                 credentials: "include",
                 body: JSON.stringify({
-                    message
+                    message,
+                    ...(coords ? { lat: coords.lat, lon: coords.lon } : {})
                 })
             })
 

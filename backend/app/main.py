@@ -44,34 +44,39 @@ def chat():
         # extract data from message sent from the frontend
         data = request.get_json()
         message = data.get("message")
-        location = data.get("location")
+        lat = data.get("lat")
+        lon = data.get("lon")
 
         if not message:
             return jsonify({"error": "no message provided"}), 400
-        
-        # get user's IP address
+
+        # get user's IP
         ip = request.headers.get("X-forwarded-for", request.remote_addr)
 
-        # use IPAPI to get the user's city
-        ipapi_response = requests.get(f"https://ipapi.co/{ip}/json/")
-        ipapi_data = ipapi_response.json()
-        latitude = ipapi_data.get("latitude")
-        longitude = ipapi_data.get("longitude")
-        cityname = ipapi_data.get("city")
+        if lat is not None and lon is not None:
+            location_query = f"{lat},{lon}"
+            weather_response = requests.get(f"http://api.weatherapi.com/v1/current.json?key={weather_api_key}&q={location_query}").json()
+            cityname = ipapi_data.get("city")
+            region = weather_response["location"]["region"]
+            country = weather_response["location"]["country"]
+        else:
+            # use IPAPI to get the user's city
+            ipapi_response = requests.get(f"https://ipapi.co/{ip}/json/")
+            ipapi_data = ipapi_response.json()
+            latitude = ipapi_data.get("latitude")
+            longitude = ipapi_data.get("longitude")
+            cityname = ipapi_data.get("city")
 
-        location_query = f"{latitude},{longitude}"
-
-
-        # use WeatherAPI to get current weather in that city
-        weather_response = requests.get(f"http://api.weatherapi.com/v1/current.json?key={weather_api_key}&q={location_query}").json()
+            location_query = f"{latitude},{longitude}"
+            weather_response = requests.get(f"http://api.weatherapi.com/v1/current.json?key={weather_api_key}&q={location_query}").json()
+            city = cityname
+            region = weather_response["location"]["region"]
+            country = weather_response["location"]["country"]
 
         if not weather_response:
             return ({"error": "error with getting weather data"}), 400
 
         # extract important fields from the weather API's response
-        city = cityname
-        region = weather_response["location"]["region"]
-        country = weather_response["location"]["country"]
         condition = weather_response["current"]["condition"]["text"]
         temperature = weather_response["current"]["temp_c"]
         feelslike = weather_response["current"]["feelslike_c"]
