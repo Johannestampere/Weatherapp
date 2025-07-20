@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 
 export default function GoogleLoginButton() {
     const router = useRouter();
-    console.log("Google Client ID:", process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID);
     const handleLoginSuccess = async (credentialResponse: any) => {
         // JWT given by google
         const idToken = credentialResponse.credential;
