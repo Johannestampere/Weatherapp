@@ -23,9 +23,9 @@ app.config["SESSION_TYPE"] = "filesystem"
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_USE_SIGNER"] = True
 app.secret_key = os.getenv("FLASK_SECRET_KEY")
-app.config["SESSION_COOKIE_SAMESITE"] = "None"
-app.config["SESSION_COOKIE_SECURE"] = True
-app.config["SESSION_COOKIE_DOMAIN"] = ".weatherapp-lexiden.com"
+app.config["SESSION_COOKIE_SAMESITE"] = "None" # for production, use "None"
+app.config["SESSION_COOKIE_SECURE"] = True # for prod, use True
+app.config["SESSION_COOKIE_DOMAIN"] = ".weatherapp-lexiden.com" # for prod, uncomment
 
 Session(app)
 
@@ -55,19 +55,21 @@ def chat():
         # use IPAPI to get the user's city
         ipapi_response = requests.get(f"https://ipapi.co/{ip}/json/")
         ipapi_data = ipapi_response.json()
-        city = ipapi_data.get("city")
+        latitude = ipapi_data.get("latitude")
+        longitude = ipapi_data.get("longitude")
+        cityname = ipapi_data.get("city")
 
-        if not city:
-            city = "Waterloo"  # only for dev
+        location_query = f"{latitude},{longitude}"
+
 
         # use WeatherAPI to get current weather in that city
-        weather_response = requests.get(f"http://api.weatherapi.com/v1/current.json?key={weather_api_key}&q={city}").json()
+        weather_response = requests.get(f"http://api.weatherapi.com/v1/current.json?key={weather_api_key}&q={location_query}").json()
 
         if not weather_response:
             return ({"error": "error with getting weather data"}), 400
 
         # extract important fields from the weather API's response
-        city = weather_response["location"]["name"]
+        city = cityname
         region = weather_response["location"]["region"]
         country = weather_response["location"]["country"]
         condition = weather_response["current"]["condition"]["text"]
