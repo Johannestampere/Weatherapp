@@ -18,11 +18,13 @@ app = Flask(__name__)
 origins = os.getenv("CORS_ORIGINS", "http://localhost:3000").split(",")
 CORS(app, supports_credentials=True, origins=origins, methods=["GET", "POST", "OPTIONS"], allow_headers=["Content-Type", "Authorization"])
 
-# session handling config
+# session and cookie config
 app.config["SESSION_TYPE"] = "filesystem"
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_USE_SIGNER"] = True
 app.secret_key = os.getenv("FLASK_SECRET_KEY")
+app.config["SESSION_COOKIE_SAMESITE"] = "None"
+app.config["SESSION_COOKIE_SECURE"] = True
 
 Session(app)
 
