@@ -25,6 +25,7 @@ app.config["SESSION_USE_SIGNER"] = True
 app.secret_key = os.getenv("FLASK_SECRET_KEY")
 app.config["SESSION_COOKIE_SAMESITE"] = "None"
 app.config["SESSION_COOKIE_SECURE"] = True
+app.config["SESSION_COOKIE_DOMAIN"] = ".weatherapp-lexiden.com"
 
 Session(app)
 
