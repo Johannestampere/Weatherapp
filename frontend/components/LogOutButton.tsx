@@ -5,7 +5,7 @@ export default function LogoutButton() {
     const router = useRouter();
 
     const handleLogout = async () => {
-        await fetch("http://localhost:5001/auth/logout", {
+        await fetch("https:lexidenassignment-production.up.railway.app/auth/logout", {
             method: "POST",
             credentials: "include"
         })

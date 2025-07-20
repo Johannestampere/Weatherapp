@@ -30,7 +30,7 @@ export default function MainPage() {
 
         setSending(true);
         try {
-            const res = await fetch("http://localhost:5001/chat", {
+            const res = await fetch("https:lexidenassignment-production.up.railway.app/chat", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

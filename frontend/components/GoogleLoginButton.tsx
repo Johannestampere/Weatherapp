@@ -12,7 +12,7 @@ export default function GoogleLoginButton() {
         if (!idToken) return;
 
         // send google id token to backend
-        const res = await fetch("http://localhost:5001/auth/login", {
+        const res = await fetch("https:lexidenassignment-production.up.railway.app/auth/login", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
