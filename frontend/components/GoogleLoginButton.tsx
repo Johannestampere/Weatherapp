@@ -15,6 +15,7 @@ export default function GoogleLoginButton() {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({ id_token: idToken }),
+            credentials: "include"
         });
 
         // get response data from backend
