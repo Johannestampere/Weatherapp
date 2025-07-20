@@ -13,7 +13,7 @@ load_dotenv()
 
 # create the flask app, allow CORS
 app = Flask(__name__)
-CORS(app)
+CORS(app, supports_credentials=True, origins=["http://localhost:3000"])
 
 # session handling config
 app.config["SESSION_TYPE"] = "filesystem"
@@ -26,7 +26,7 @@ Session(app)
 openai.api_key = os.getenv("OPENAI_API_KEY")
 weather_api_key = os.getenv("WEATHER_API_KEY")
 
-app.register_blueprint(auth_blueprint)
+app.register_blueprint(auth_blueprint, url_prefix="/auth")
 
 @app.route("/chat", methods=["POST"])
 def chat():
@@ -98,4 +98,4 @@ Be friendly and warm.
 
 # to run locally
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    app.run(debug=True, host="localhost", port=5000)
