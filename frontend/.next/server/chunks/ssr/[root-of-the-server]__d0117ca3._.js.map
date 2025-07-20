@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 6, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"","debugId":null}},
+    {"offset": {"line": 14, "column": 0}, "map": {"version":3,"sources":["file:///Users/johannestampere/Desktop/Project_Lexiden/frontend/app/page.tsx"],"sourcesContent":["\n\nexport default function LandingPage() {\n  return (\n    <div className=\"text-2xl bg-red-200\">\n      HELLOOOO\n    </div>\n  )\n}"],"names":[],"mappings":";;;;;AAEe,SAAS;IACtB,qBACE,8OAAC;QAAI,WAAU;kBAAsB;;;;;;AAIzC","debugId":null}}]
+}
