@@ -52,24 +52,22 @@ def chat():
 
         # get user's IP
         ip = request.headers.get("X-forwarded-for", request.remote_addr)
+        # always get city from ipapi
+        ipapi_response = requests.get(f"https://ipapi.co/{ip}/json/")
+        ipapi_data = ipapi_response.json()
+        cityname = ipapi_data.get("city")
 
         if lat is not None and lon is not None:
+            # Use coordinates to get weather
             location_query = f"{lat},{lon}"
             weather_response = requests.get(f"http://api.weatherapi.com/v1/current.json?key={weather_api_key}&q={location_query}").json()
-            cityname = ipapi_data.get("city")
             region = weather_response["location"]["region"]
             country = weather_response["location"]["country"]
         else:
-            # use IPAPI to get the user's city
-            ipapi_response = requests.get(f"https://ipapi.co/{ip}/json/")
-            ipapi_data = ipapi_response.json()
             latitude = ipapi_data.get("latitude")
             longitude = ipapi_data.get("longitude")
-            cityname = ipapi_data.get("city")
-
             location_query = f"{latitude},{longitude}"
             weather_response = requests.get(f"http://api.weatherapi.com/v1/current.json?key={weather_api_key}&q={location_query}").json()
-            city = cityname
             region = weather_response["location"]["region"]
             country = weather_response["location"]["country"]
 
@@ -84,7 +82,7 @@ def chat():
         uv = weather_response["current"]["uv"]
 
         # summary that goes to openAI
-        weather_summary = f"{condition}, {temperature}°C in {city}, {region}, {country}. Other factors: feels like {feelslike}, wind speed: {wind_speed}, uv: {uv}"
+        weather_summary = f"{condition}, {temperature}°C in {cityname}, {region}, {country}. Other factors: feels like {feelslike}, wind speed: {wind_speed}, uv: {uv}"
 
         # make the perfect prompt
         prompt = f"""
