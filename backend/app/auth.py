@@ -32,6 +32,8 @@ def google_auth():
             "name": user_name
         }
 
+        session.modified = True
+
         return jsonify({
             "message": "JWT valid, login valid",
             "email": user_email,
