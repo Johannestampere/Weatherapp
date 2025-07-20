@@ -4,6 +4,9 @@ import openai
 import requests
 import os
 from dotenv import load_dotenv
+from flask import session
+from flask_session import Session
+from auth import auth_blueprint
 
 # load env variables from .env
 load_dotenv()
@@ -12,8 +15,18 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app)
 
+# session handling config
+app.config["SESSION_TYPE"] = "filesystem"
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_USE_SIGNER"] = True
+app.secret_key = os.getenv("FLASK_SECRET_KEY")
+
+Session(app)
+
 openai.api_key = os.getenv("OPENAI_API_KEY")
 weather_api_key = os.getenv("WEATHER_API_KEY")
+
+app.register_blueprint(auth_blueprint)
 
 @app.route("/chat", methods=["POST"])
 def chat():
