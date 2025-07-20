@@ -22,7 +22,7 @@ export default function MainPage() {
     }, [user, router, isLoading]);
 
     if (isLoading || !user) {
-        return <div>loading...</div>;
+        return <div className="text-2xl font-bold text-green-900">loading...</div>;
     }
 
     const sendMessage = async () => {
@@ -43,7 +43,6 @@ export default function MainPage() {
 
             // get openAI's answer in json format
             const data = await res.json();
-            console.log("DEBUGGGG OpenAI response:", data.reply);
             setReply(data.reply);
         } catch (err) {
             setReply("something went wrong");
@@ -53,31 +52,43 @@ export default function MainPage() {
     }
 
     return (
-        <div>
-            <LogoutButton />
-            <h1>Hey, {user.name}</h1>
-            <h2>What do you want to know about today's weather?</h2>
-
-            <textarea
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            placeholder="What should I wear today?"
-            className="w-full rounded-lg border border-gray-300 p-4 mb-4"
-            rows={4}
-            />
-
-            <button
-            onClick={sendMessage}
-            disabled={sending}
-            className="px-6 py-2 bg-gray-200 text-black rounded-lg hover:bg-gray-300 transition">
-                {sending ? "Thinking" : "Send"}
-            </button>
-
-            {reply && (
-                <div className="mt-4 p-4 bg-gray-50 rounded-lg markdown-content">
-                    <ReactMarkdown>{reply}</ReactMarkdown>
+        <div className="flex flex-col items-center justify-center min-h-screen w-full gap-6 relative">
+            <div className="absolute top-6 right-8 z-10">
+                <LogoutButton />
+            </div>
+            <div className="w-full max-w-xl flex flex-col items-center gap-4 bg-white/70 rounded-2xl shadow-lg p-8">
+                <div className="w-full mb-2">
+                  <h1 className="text-3xl font-extrabold text-green-900 text-left">Hey, {user.name}</h1>
+                  <h2 className="text-xl font-bold text-green-800 mt-2 mb-4 text-left">How can I help you with today’s weather?</h2>
                 </div>
-            )}
+
+                <textarea
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  placeholder="What should I wear today?"
+                  className="w-full rounded-xl border border-blue-200 p-4 mb-4 bg-white/80 text-blue-900 focus:border-blue-400 focus:ring-0 focus:outline-none transition"
+                  rows={4}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();
+                      sendMessage();
+                    }
+                  }}
+                />
+
+                <button
+                  onClick={sendMessage}
+                  disabled={sending}
+                  className="w-full px-6 py-3 bg-gradient-to-r from-green-200 to-green-100 text-green-900 font-bold rounded-xl shadow hover:cursor-pointer hover:from-green-300 hover:to-green-200 transition disabled:opacity-60 disabled:cursor-not-allowed">
+                    {sending ? "Thinking..." : "Send"}
+                </button>
+
+                {reply && (
+                    <div className="mt-4 p-4 bg-green-50/80 rounded-xl shadow-inner w-full text-green-900 text-lg">
+                        <ReactMarkdown>{reply}</ReactMarkdown>
+                    </div>
+                )}
+            </div>
         </div>
     )
 }

@@ -16,12 +16,12 @@ export default function LandingPage() {
   }, [user, isLoading, router])
 
   if (isLoading) {
-    return <div>loading...</div>;
+    return <div className="text-2xl font-bold text-green-900">loading...</div>;
   }
 
   return (
-    <div className="flex flex-col justify-center items-center gap-10">
-      <h1 className="text-bold text-3xl">Welcome to WeatherGPT, sign in to get started</h1>
+    <div className="flex flex-col justify-center items-center gap-10 min-h-screen w-full">
+      <h1 className="text-5xl font-extrabold text-green-900 drop-shadow-lg text-center">Welcome to <span className="text-green-700">WeatherGPT</span>,<br/> sign in to get started</h1>
       <div>
         <GoogleLoginButton/>
       </div>
