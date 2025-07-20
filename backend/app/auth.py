@@ -5,7 +5,7 @@ import os
 
 auth_blueprint = Blueprint("auth", __name__)
 
-@auth_blueprint.route("/auth", methods=["POST"])
+@auth_blueprint.route("/login", methods=["POST"])
 def google_auth():
     
     try:
@@ -44,7 +44,7 @@ def get_cur_user():
     else:
         return jsonify({"error": "not logged in"}), 401
 
-@auth_blueprint.route("logout", methods=["POST"])
+@auth_blueprint.route("/logout", methods=["POST"])
 def logout():
     session.clear()
     return jsonify({"message": "logged out successfully"})

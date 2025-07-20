@@ -26,7 +26,7 @@ Session(app)
 openai.api_key = os.getenv("OPENAI_API_KEY")
 weather_api_key = os.getenv("WEATHER_API_KEY")
 
-app.register_blueprint(auth_blueprint)
+app.register_blueprint(auth_blueprint, url_prefix="/auth")
 
 @app.route("/chat", methods=["POST"])
 def chat():
