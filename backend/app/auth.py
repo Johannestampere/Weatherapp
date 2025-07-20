@@ -26,6 +26,7 @@ def google_auth():
         user_email = id_info.get("email")
         user_name = id_info.get("name")
 
+        # store user info in session
         session["user"] = {
             "email": user_email,
             "name": user_name

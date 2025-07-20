@@ -11,9 +11,12 @@ from openai import OpenAI
 # load env variables from .env
 load_dotenv()
 
-# create the flask app, allow CORS
+# create the flask app
 app = Flask(__name__)
-CORS(app, supports_credentials=True, origins=["http://localhost:3000"], methods=["GET", "POST", "OPTIONS"], allow_headers=["Content-Type", "Authorization"])
+
+# default to localhost for dev
+origins = os.getenv("CORS_ORIGINS", "http://localhost:3000").split(",")
+CORS(app, supports_credentials=True, origins=origins, methods=["GET", "POST", "OPTIONS"], allow_headers=["Content-Type", "Authorization"])
 
 # session handling config
 app.config["SESSION_TYPE"] = "filesystem"
@@ -103,6 +106,7 @@ It's currently **overcast** and *21.1°C* in Waterloo. A bit cloudy, but still c
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# to run locally
+# to run locally or on Railway
 if __name__ == "__main__":
-    app.run(debug=True, host="localhost", port=5001)
+    port = int(os.environ.get("PORT", 5001))
+    app.run(debug=True, host="0.0.0.0", port=port)
